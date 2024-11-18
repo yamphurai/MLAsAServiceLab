@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
+    <device id="retina6_3" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="ufC-wZ-h7g">
+            <objects>
+                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="MLAsAServiceLab" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
+                        <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
+                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kXJ-SL-qGM">
+                                <rect key="frame" x="16" y="62" width="126" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="Get New DSID">
+                                    <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="getDataSetId:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="kgo-Dp-LUA"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current DSID:  0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yA7-nd-seT">
+                                <rect key="frame" x="244" y="62" width="142" height="24"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="textColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hUu-DN-Kwe">
+                                <rect key="frame" x="16" y="307" width="370" height="4"/>
+                            </progressView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hnx-72-uCy">
+                                <rect key="frame" x="139" y="141" width="124" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="Update Model">
+                                    <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="makeModel:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="8rn-ZV-hYa"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Enter IP Address" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jlp-94-R9w">
+                                <rect key="frame" x="129" y="811" width="126" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="jA3-Q1-V5h">
+                                <rect key="frame" x="48" y="769" width="288" height="34"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation"/>
+                                <connections>
+                                    <action selector="ipAddressTextFieldEditingDidEnd:" destination="vXZ-lx-hvc" eventType="editingDidEnd" id="ss4-Ah-B0W"/>
+                                </connections>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="hUu-DN-Kwe" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="GQz-pu-fvz"/>
+                            <constraint firstItem="hnx-72-uCy" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="JaZ-Dz-f0H"/>
+                            <constraint firstItem="yA7-nd-seT" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="JmY-fg-drR"/>
+                            <constraint firstItem="kXJ-SL-qGM" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="SBS-4X-IRU"/>
+                            <constraint firstItem="yA7-nd-seT" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="VrV-uX-lFx"/>
+                            <constraint firstItem="hUu-DN-Kwe" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="bNO-4O-ATp"/>
+                            <constraint firstItem="kXJ-SL-qGM" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="kMd-Z1-Hr6"/>
+                            <constraint firstItem="hnx-72-uCy" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="79" id="oSl-Zs-r7a"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="kXJ-SL-qGM" secondAttribute="trailingMargin" id="q2a-1d-Qbh"/>
+                            <constraint firstItem="yA7-nd-seT" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="y9e-6H-PmW"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="dsidLabel" destination="yA7-nd-seT" id="pMu-dh-28l"/>
+                        <outlet property="ipAddressTextField" destination="jA3-Q1-V5h" id="jnR-vZ-V8z"/>
+                        <outlet property="largeMotionMagnitude" destination="hUu-DN-Kwe" id="oWd-Qb-Qtq"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="323.88059701492534" y="264.30205949656749"/>
+        </scene>
+    </scenes>
+</document>
