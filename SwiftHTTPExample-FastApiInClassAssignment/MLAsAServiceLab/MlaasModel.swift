@@ -7,8 +7,6 @@
 //
 
 
-
-
 /// This model uses delegation to interact with the main controller. The two functions below are for notifying the user that an update was completed successfully on the server. They must be implemented.
 protocol ClientDelegate{
     func updateDsid(_ newDsid:Int)          // method to update the DSID
@@ -30,7 +28,7 @@ import UIKit
 // class to handle HTTP requests and manages the connection to a server.
 class MlaasModel: NSObject, URLSessionDelegate{
     
-    //MARK: Properties and Delegation
+    //MARK: -Properties and Delegation
     private let operationQueue = OperationQueue()  //used to manage tasks
     private var dsid:Int = 5  //private variable to store the DSID
     var delegate:ClientDelegate?  // create a delegate for using the protocol i.e. to communicate with the view controller
@@ -40,16 +38,6 @@ class MlaasModel: NSObject, URLSessionDelegate{
         didSet {
             print("Server IP updated to: \(server_ip)")
         }
-    }
-    
-    // updates the DSID value
-    func updateDsid(_ newDsid:Int){
-        dsid = newDsid
-    }
-    
-    //returns current DSID value
-    func getDsid()->(Int){
-        return dsid
     }
     
     // a URL session with custom configs to handle requests with a timeout and max number of connections
@@ -63,8 +51,17 @@ class MlaasModel: NSObject, URLSessionDelegate{
         return URLSession(configuration: sessionConfig, delegate: self, delegateQueue:self.operationQueue)
     }()
     
+    // updates the DSID value
+    func updateDsid(_ newDsid:Int){
+        dsid = newDsid
+    }
     
-    //MARK: Setters and Getters
+    //returns current DSID value
+    func getDsid()->(Int){
+        return dsid
+    }
+
+    //MARK: -Setters and Getters
     
     //check if the provided IP is valied and set it as the server IP
     func setServerIp(ip:String)->(Bool){
@@ -78,8 +75,7 @@ class MlaasModel: NSObject, URLSessionDelegate{
         }
     }
     
-    
-    //MARK: Main Functions
+    //MARK: -Main Functions
     
     //Lab: Send image data to the server for prediction
     func sendImageData(_ imageData: Data) {
@@ -104,7 +100,9 @@ class MlaasModel: NSObject, URLSessionDelegate{
             } else {
                 if let delegate = self.delegate {
                     let jsonDictionary = self.convertDataToDictionary(with: data)
-                    delegate.receivedPrediction(jsonDictionary)
+                    DispatchQueue.main.async {
+                        delegate.receivedPrediction(jsonDictionary)
+                    }
                 }
             }
         })
@@ -127,10 +125,11 @@ class MlaasModel: NSObject, URLSessionDelegate{
             let jsonDictionary = self.convertDataToDictionary(with: data)  //convert raw data returned from server into a dict
              
             // check if the delegate has been set to the view controller, if response from the server exists and the dict containts a vlid dsid field of type Int
-            if let delegate = self.delegate, let resp=response, let dsid = jsonDictionary["dsid"] as? Int {
+            if let delegate = self.delegate, let dsid = jsonDictionary["dsid"] as? Int {
                 self.dsid = dsid+1  //increase dsid value by 1 which represents new dsid
-                delegate.updateDsid(self.dsid)  //update UI with new dsid
-                print(resp)  //print response object for debugging purpose
+                DispatchQueue.main.async {
+                    delegate.updateDsid(self.dsid)  //update the dsid
+                }
             }
         })
         getTask.resume() // start the task to send the HTTP GET request to the server

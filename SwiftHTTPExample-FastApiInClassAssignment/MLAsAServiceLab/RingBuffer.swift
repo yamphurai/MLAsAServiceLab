@@ -10,16 +10,13 @@ import UIKit
 
 let BUFFER_SIZE = 50  //the size of the circular buffer for storing data.
 
-
 //implement a ring (or circular) buffer structure that stores data in arrays.
 class RingBuffer: NSObject {
-    
-    
-    // Array to hold image references (can hold either UIImage objects or strings representing image paths)
-    var images = [UIImage?](repeating: nil, count: BUFFER_SIZE)
+
+    private var images = [UIImage?](repeating: nil, count: BUFFER_SIZE)  // Array to hold image references (can hold either UIImage objects or strings representing image paths)
     
     // used to keep track of the current position where the next data will be inserted into the buffer.
-    var head:Int = 0 {
+    private var head:Int = 0 {
         
         // monitor changes to head
         didSet{
@@ -31,11 +28,16 @@ class RingBuffer: NSObject {
         }
     }
     
+    // Serial queue to ensure thread safety
+    private let queue = DispatchQueue(label: "com.example.ringbuffer.queue")
     
-    // Add new image to the buffer
+    
+    // Add new image to the buffer. Also ensuring thread safety
     func addNewImage(image: UIImage) {
-        images[head] = image
-        head += 1  // Move the head pointer to the next position
+        queue.sync {
+            images[head] = image
+            head += 1  // Move the head pointer to the next position
+        }
     }
     
     // Return all images in the buffer as an array

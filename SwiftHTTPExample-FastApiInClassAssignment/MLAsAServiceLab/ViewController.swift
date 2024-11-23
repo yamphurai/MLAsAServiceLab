@@ -10,6 +10,7 @@
 import UIKit
 import CoreMotion
 import AVFoundation
+import Vision
 
 
 class ViewController: UIViewController, ClientDelegate, UITextFieldDelegate, AVCapturePhotoCaptureDelegate{
@@ -97,8 +98,8 @@ class ViewController: UIViewController, ClientDelegate, UITextFieldDelegate, AVC
  
         captureSession = AVCaptureSession()  // Create capture session
             
-            // Set up camera input
-            guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else { return }
+            // Set up the front camera for input
+            guard let videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else { return }
             let videoDeviceInput: AVCaptureDeviceInput
             
             //try to capture the video input
