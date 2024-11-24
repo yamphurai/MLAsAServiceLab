@@ -134,17 +134,26 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oQH-8o-21c">
-                                <rect key="frame" x="66" y="683" width="62" height="35"/>
+                                <rect key="frame" x="66" y="683" width="90" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="MXQ-BZ-nts"/>
+                                </constraints>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Rock"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dSs-ye-apU">
-                                <rect key="frame" x="66" y="728" width="68.333333333333314" height="35"/>
+                                <rect key="frame" x="66" y="728" width="90" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="BWh-Ds-cgj"/>
+                                </constraints>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Paper"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="chu-Se-Nif">
-                                <rect key="frame" x="66" y="773" width="88" height="35"/>
+                                <rect key="frame" x="66" y="773" width="90" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="90" id="MMF-Vs-wv8"/>
+                                </constraints>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Scissors"/>
                             </button>
@@ -154,10 +163,40 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sf9-n2-GE1">
-                                <rect key="frame" x="180" y="773" width="147" height="35"/>
+                                <rect key="frame" x="237" y="773" width="90" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="90" id="Gdb-Lb-myF"/>
+                                </constraints>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Change Camera"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Rotate"/>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Labels" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zA3-sT-ZOn">
+                                <rect key="frame" x="66" y="657" width="90" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="90" id="oTJ-G7-qkl"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="omD-JQ-AQH">
+                                <rect key="frame" x="237" y="728" width="90" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="90" id="6iC-qb-82j"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Train"/>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h5O-53-Qhe">
+                                <rect key="frame" x="202" y="663" width="180" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="gFt-pJ-rxd"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="uwy-kx-dZT"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
@@ -165,19 +204,27 @@
                             <constraint firstItem="iWY-eC-Lmn" firstAttribute="top" secondItem="chu-Se-Nif" secondAttribute="bottom" constant="10" id="3G2-gw-BMO"/>
                             <constraint firstItem="dSs-ye-apU" firstAttribute="top" secondItem="oQH-8o-21c" secondAttribute="bottom" constant="10" id="3rb-U1-xKC"/>
                             <constraint firstItem="oQH-8o-21c" firstAttribute="leading" secondItem="3w9-1C-mBH" secondAttribute="leadingMargin" constant="50" id="5Cg-GV-tpT"/>
+                            <constraint firstItem="h5O-53-Qhe" firstAttribute="trailing" secondItem="3w9-1C-mBH" secondAttribute="trailingMargin" constant="5" id="DKp-WH-bdb"/>
                             <constraint firstItem="chu-Se-Nif" firstAttribute="leading" secondItem="3w9-1C-mBH" secondAttribute="leadingMargin" constant="50" id="DMf-7D-kGZ"/>
                             <constraint firstItem="iWY-eC-Lmn" firstAttribute="top" secondItem="sf9-n2-GE1" secondAttribute="bottom" constant="10" id="G2p-ua-jmZ"/>
+                            <constraint firstItem="zA3-sT-ZOn" firstAttribute="leading" secondItem="3w9-1C-mBH" secondAttribute="leadingMargin" constant="50" id="Pgz-j9-cWR"/>
+                            <constraint firstItem="sf9-n2-GE1" firstAttribute="top" secondItem="omD-JQ-AQH" secondAttribute="bottom" constant="10" id="Qdc-Bu-BFd"/>
                             <constraint firstItem="dSs-ye-apU" firstAttribute="leading" secondItem="3w9-1C-mBH" secondAttribute="leadingMargin" constant="50" id="Wec-7r-npA"/>
+                            <constraint firstItem="oQH-8o-21c" firstAttribute="top" secondItem="zA3-sT-ZOn" secondAttribute="bottom" constant="5" id="cIs-G5-kPI"/>
                             <constraint firstItem="chu-Se-Nif" firstAttribute="top" secondItem="dSs-ye-apU" secondAttribute="bottom" constant="10" id="caI-Bs-df6"/>
+                            <constraint firstItem="omD-JQ-AQH" firstAttribute="top" secondItem="h5O-53-Qhe" secondAttribute="bottom" constant="5" id="i19-8q-Fie"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="omD-JQ-AQH" secondAttribute="trailing" constant="50" id="qNB-P7-uvN"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="vWX-uM-yDy"/>
                     <connections>
                         <outlet property="cameraView" destination="v5j-BX-PcP" id="sHR-9M-kol"/>
+                        <outlet property="modelLabel" destination="h5O-53-Qhe" id="T7j-be-N8f"/>
                         <outlet property="paperButton" destination="dSs-ye-apU" id="qaR-PK-z3b"/>
                         <outlet property="rockButton" destination="oQH-8o-21c" id="Zlq-X0-DVB"/>
                         <outlet property="scissorsButton" destination="chu-Se-Nif" id="KRb-O8-PnI"/>
                         <outlet property="switchCameraButton" destination="sf9-n2-GE1" id="Jys-po-BPe"/>
+                        <outlet property="trainButton" destination="omD-JQ-AQH" id="mJp-Xf-ie3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rwe-En-IGi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

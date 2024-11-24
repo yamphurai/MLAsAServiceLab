@@ -2,7 +2,7 @@ import UIKit
 import AVFoundation
 import Vision
 
-class TrainingViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
+class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     private var captureSession: AVCaptureSession?
     private var videoDeviceInput: AVCaptureDeviceInput?
@@ -46,17 +46,23 @@ class TrainingViewController: UIViewController, AVCaptureVideoDataOutputSampleBu
     @IBOutlet weak var paperButton: UIButton!
     @IBOutlet weak var scissorsButton: UIButton!
     @IBOutlet weak var switchCameraButton: UIButton!
+    @IBOutlet weak var trainButton: UIButton!
+    @IBOutlet weak var modelLabel: UILabel!
+    
+    let client = MlaasModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCamera()
         setupUI()
+        
+        client.delegate = self
+        
+        if let ipAddress = AppSettings.shared.loadData(key: "IPAddress") as? String {
+            _ = client.setServerIp(ip: ipAddress)
+        }
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        previewLayer.frame = cameraView.bounds
-    }
     
     private func setupCamera() {
         captureSession = AVCaptureSession()
@@ -85,15 +91,14 @@ class TrainingViewController: UIViewController, AVCaptureVideoDataOutputSampleBu
         captureSession.startRunning()
     }
     
-    // MARK: - UI Setup
     private func setupUI() {
         rockButton.addTarget(self, action: #selector(captureRock), for: .touchUpInside)
         paperButton.addTarget(self, action: #selector(capturePaper), for: .touchUpInside)
         scissorsButton.addTarget(self, action: #selector(captureScissors), for: .touchUpInside)
         switchCameraButton.addTarget(self, action: #selector(switchCamera), for: .touchUpInside)
+        trainButton.addTarget(self, action: #selector(trainModel), for: .touchUpInside)
     }
     
-    // MARK: - Button Actions
     @objc private func captureRock() {
         labelForCapture = "Rock"
         shouldCaptureData = true
@@ -126,6 +131,10 @@ class TrainingViewController: UIViewController, AVCaptureVideoDataOutputSampleBu
         captureSession.addInput(newVideoDeviceInput)
         self.videoDeviceInput = newVideoDeviceInput
         captureSession.commitConfiguration()
+    }
+    
+    @objc private func trainModel() {
+        self.client.trainModel()
     }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
@@ -165,33 +174,49 @@ class TrainingViewController: UIViewController, AVCaptureVideoDataOutputSampleBu
     
     // Capture Data And Convert Coordinates Into A Flat Record That We Can Use For Training
     private func processHandPoseForModel(_ observation: VNHumanHandPoseObservation) {
-        guard shouldCaptureData else { return } // Only Capture If Button Clicked
+        guard shouldCaptureData else { return } // Only process if capture is enabled
         guard let recognizedPoints = try? observation.recognizedPoints(.all) else { return }
-        
-        var featureRow: [String: Any] = ["label": labelForCapture]
-        
-        // Flatten all joint data into x, y, confidence for each joint
-        for (jointName, point) in recognizedPoints {
-            if point.confidence > coordinateConfidence {
-                if let humanReadableName = jointNameMapping[jointName.rawValue.rawValue] {
-                    featureRow["\(humanReadableName)_x"] = point.location.x
-                    featureRow["\(humanReadableName)_y"] = point.location.y
-                    featureRow["\(humanReadableName)_confidence"] = point.confidence
-                }
-            } else {
-                // Need To Work On This
-                // For Consistency We Need All Joints Each Time
-                // But We Should Be Prioritize Low Confidence Readings
-                if let humanReadableName = jointNameMapping[jointName.rawValue.rawValue] {
-                    featureRow["\(humanReadableName)_x"] = 0
-                    featureRow["\(humanReadableName)_y"] = 0
-                    featureRow["\(humanReadableName)_confidence"] = 0
+
+        var featureVector: [Double] = [] // Coordinates As Vectors
+        var columnNames: [String] = []  // Column Names For Debugging
+
+        // I Think They Should Always Be In The Same Order But
+        // Sort By Name To Be Sure
+        let sortedPoints = recognizedPoints
+            .map { (jointName, point) -> (String, CGPoint) in
+                let humanReadableName = jointNameMapping[jointName.rawValue.rawValue] ?? jointName.rawValue.rawValue
+                if point.confidence > coordinateConfidence {
+                    return (humanReadableName, point.location)
+                } else {
+                    // Set values to (0, 0) if confidence is low
+                    // TODO: Need To Review This Logic
+                    return (humanReadableName, CGPoint(x: 0, y: 0))
                 }
             }
+            .sorted { $0.0 < $1.0 }
+
+        for (humanReadableName, location) in sortedPoints {
+            // Create A Feature For The X and Y For Each Point
+            featureVector.append(Double(location.x))
+            featureVector.append(Double(location.y))
+            
+            // Columns For Debugging
+            columnNames.append("\(humanReadableName)_x")
+            columnNames.append("\(humanReadableName)_y")
         }
-        print("Data: \(featureRow)")
+
+        // Output For Debugging
+        print("Feature Vector for Label: \(labelForCapture)")
+        print("Columns: \(columnNames.joined(separator: ", "))")
+        print("Values: \(featureVector)")
+
+        // Send To Server
+        self.client.sendData(featureVector, withLabel: labelForCapture)
+        
+        // Indicate To Stop Capturing
         shouldCaptureData = false
     }
+
     
     private func displayHandPoints() {
         cameraView.layer.sublayers?.removeAll(where: { $0 is CAShapeLayer })
@@ -213,6 +238,22 @@ class TrainingViewController: UIViewController, AVCaptureVideoDataOutputSampleBu
             circleLayer.path = circlePath.cgPath
             circleLayer.fillColor = UIColor.red.cgColor
             cameraView.layer.addSublayer(circleLayer)
+        }
+    }
+    
+    // Delegate From Model Class - Not Handler In This Controller - Do Nothing
+    func updateDsid(_ newDsid:Int){
+    }
+    
+    // Delegate From Model Class - Not Handler In This Controller - Do Nothing
+    func receivedPrediction(_ prediction:[String:Any]){
+
+    }
+    
+    // Display Selected Model
+    func receiveModel(_ model:String){
+        DispatchQueue.main.async{
+            self.modelLabel.text = model
         }
     }
 }

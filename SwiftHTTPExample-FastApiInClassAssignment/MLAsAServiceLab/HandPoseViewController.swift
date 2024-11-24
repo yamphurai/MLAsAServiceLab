@@ -11,7 +11,7 @@ import AVFoundation
 import Vision
 import CoreMotion
 
-class HandPoseViewController: UIViewController, ClientDelegate, UITextFieldDelegate, AVCapturePhotoCaptureDelegate, AVCaptureVideoDataOutputSampleBufferDelegate{
+class HandPoseViewController: UIViewController,  UITextFieldDelegate, AVCapturePhotoCaptureDelegate, AVCaptureVideoDataOutputSampleBufferDelegate{
     
     private var handPoseInfo: String = "Detecting hand poses..."  // message to indicate if hand pose is detected
     private var handPoints: [CGPoint] = []   // array that stores joint points of the hand
@@ -75,7 +75,7 @@ class HandPoseViewController: UIViewController, ClientDelegate, UITextFieldDeleg
         animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
         animation.type = .fade
         animation.duration = 0.5
-        client.delegate = self
+        //client.delegate = self
         client.updateDsid(5)
         ipAddressTextField.delegate = self
         setupToolbar()
@@ -275,9 +275,9 @@ class HandPoseViewController: UIViewController, ClientDelegate, UITextFieldDeleg
         ]
         
         //try to serialize the above hand data dict into JSON data
-        if let data = try? JSONSerialization.data(withJSONObject: handData, options: .prettyPrinted) {
-            client.sendImageData(data)  //pass the serialized JSON data as an argument to the server
-        }
+       // if let data = try? JSONSerialization.data(withJSONObject: handData, options: .prettyPrinted) {
+        //    client.sendmageData(data)  //pass the serialized JSON data as an argument to the server
+       // }
     }
     
     //callback for receiving the result of a model prediction
