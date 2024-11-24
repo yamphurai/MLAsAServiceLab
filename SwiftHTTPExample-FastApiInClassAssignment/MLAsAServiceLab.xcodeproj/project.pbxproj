@@ -10,6 +10,7 @@
 		06AA19F52CEADBB600F30D1E /* HandPoseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AA19F42CEADBB600F30D1E /* HandPoseViewController.swift */; };
 		4948CE472CF165D100875930 /* TrainingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4948CE462CF165D100875930 /* TrainingViewController.swift */; };
 		4948CE492CF18EEF00875930 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4948CE482CF18EEF00875930 /* SettingsViewController.swift */; };
+		4948CE4E2CF2FC6100875930 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4948CE4D2CF2FC6100875930 /* AppSettings.swift */; };
 		B6022E672C108DB400E2CC70 /* MlaasModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6022E662C108DB400E2CC70 /* MlaasModel.swift */; };
 		B67483DB1ACA2D6800A9970E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67483DA1ACA2D6800A9970E /* AppDelegate.swift */; };
 		B67483E01ACA2D6800A9970E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B67483DE1ACA2D6800A9970E /* Main.storyboard */; };
@@ -22,6 +23,7 @@
 		06AA19F42CEADBB600F30D1E /* HandPoseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandPoseViewController.swift; sourceTree = "<group>"; };
 		4948CE462CF165D100875930 /* TrainingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingViewController.swift; sourceTree = "<group>"; };
 		4948CE482CF18EEF00875930 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		4948CE4D2CF2FC6100875930 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		B6022E662C108DB400E2CC70 /* MlaasModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MlaasModel.swift; sourceTree = "<group>"; };
 		B67483D51ACA2D6800A9970E /* MLAsAServiceLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLAsAServiceLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B67483D91ACA2D6800A9970E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -43,9 +45,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4948CE4C2CF2E35400875930 /* FastApi */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = FastApi;
+			sourceTree = "<group>";
+		};
 		B67483CC1ACA2D6800A9970E = {
 			isa = PBXGroup;
 			children = (
+				4948CE4C2CF2E35400875930 /* FastApi */,
 				B67483D71ACA2D6800A9970E /* MLAsAServiceLab */,
 				B67483D61ACA2D6800A9970E /* Products */,
 			);
@@ -72,6 +82,7 @@
 				B67483D81ACA2D6800A9970E /* Supporting Files */,
 				4948CE462CF165D100875930 /* TrainingViewController.swift */,
 				4948CE482CF18EEF00875930 /* SettingsViewController.swift */,
+				4948CE4D2CF2FC6100875930 /* AppSettings.swift */,
 			);
 			path = MLAsAServiceLab;
 			sourceTree = SOURCE_ROOT;
@@ -159,6 +170,7 @@
 			files = (
 				4948CE472CF165D100875930 /* TrainingViewController.swift in Sources */,
 				B67483DB1ACA2D6800A9970E /* AppDelegate.swift in Sources */,
+				4948CE4E2CF2FC6100875930 /* AppSettings.swift in Sources */,
 				06AA19F52CEADBB600F30D1E /* HandPoseViewController.swift in Sources */,
 				B6022E672C108DB400E2CC70 /* MlaasModel.swift in Sources */,
 				B694B01A1FA377E4009A4277 /* RingBuffer.swift in Sources */,

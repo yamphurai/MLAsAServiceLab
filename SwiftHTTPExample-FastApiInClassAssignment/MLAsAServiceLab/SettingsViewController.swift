@@ -1,6 +1,6 @@
 import UIKit
 
-class SettingsViewController: UIViewController {
+class SettingsViewController: UIViewController, ClientDelegate  {
     @IBOutlet weak var ipTextField: UITextField!
     @IBOutlet weak var dsidLabel: UILabel!
     @IBOutlet weak var dsidRequest: UIButton!
@@ -8,9 +8,13 @@ class SettingsViewController: UIViewController {
     
     private let plistFileName = "Data.plist"
     
+    let client = MlaasModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadData(nil)
+        client.delegate = self
+        loadData()
+        
     }
     
     // Save User Entered IP Address
@@ -19,56 +23,49 @@ class SettingsViewController: UIViewController {
             ipTextField.text = "Enter IP address"
             return
         }
-        saveData(key: "IPAddress", value: ipAddress)
+        AppSettings.shared.saveData(key: "IPAddress", value: ipAddress)
+        _ = client.setServerIp(ip: ipAddress)
     }
     
     // Request New DSID
     @IBAction func requestDSID(_ sender: UIButton) {
-        // TODO: Need To Implement Get
-        let dsid = "123456"
-        saveData(key: "DSID", value: dsid)
-        dsidLabel.text = dsid
+        client.getNewDsid()
+        let dsid = client.getDsid()
+        AppSettings.shared.saveData(key: "DSID", value: dsid)
+        dsidLabel.text = String(dsid)
     }
-        
+    
     // Populate Screen From PList
-    private func loadData(_ sender: UIButton?) {
-        let ipAddress = loadData(key: "IPAddress") as? String ?? "Enter IP Address"
-        let dsid = loadData(key: "DSID") as? String ?? "No DSID"
+    private func loadData() {
+        let ipAddress = AppSettings.shared.loadData(key: "IPAddress") as? String
+        let dsid = AppSettings.shared.loadData(key: "DSID") as? Int
         
-        ipTextField.text = ipAddress
-        dsidLabel.text = dsid
-    }
-    
-    // Persist Date To PList To Use Across Sessions
-    private func saveData(key: String, value: Any) {
-        let plistPath = getPlistPath()
-        var data = NSDictionary(contentsOfFile: plistPath) as? [String: Any] ?? [:]
-        data[key] = value
-        (data as NSDictionary).write(toFile: plistPath, atomically: true)
-    }
-    
-    // Load Data From Persisted Storage
-    private func loadData(key: String) -> Any? {
-        let plistPath = getPlistPath()
-        let data = NSDictionary(contentsOfFile: plistPath)
-        return data?[key]
-    }
-    
-    // Get Path To PList - From ChatGPT
-    private func getPlistPath() -> String {
-        let fileManager = FileManager.default
-        let paths = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
-        let documentsDirectory = paths[0]
-        let plistPath = documentsDirectory.appendingPathComponent(plistFileName)
+        ipTextField.text = ipAddress ?? "Enter IP Address"
+        dsidLabel.text = dsid != nil ? String(dsid!) : "Enter DSID"
         
-        if !fileManager.fileExists(atPath: plistPath.path) {
-            if let bundlePath = Bundle.main.url(forResource: "Data", withExtension: "plist") {
-                try? fileManager.copyItem(at: bundlePath, to: plistPath)
-            } else {
-                let emptyData: [String: Any] = [:]
-                (emptyData as NSDictionary).write(to: plistPath, atomically: true)
-            }
+        if let validIpAddress = ipAddress, !validIpAddress.isEmpty {
+            _ = client.setServerIp(ip: validIpAddress)
         }
-        return plistPath.path
+        
+        if let validDsid = dsid {
+            client.updateDsid(validDsid)
+        }
+    }
+    
+    // Delegate From Model Class
+    func updateDsid(_ newDsid:Int){
+        DispatchQueue.main.async{
+            self.dsidLabel.text = String(newDsid)
+        }
+    }
+    
+    // Delegate From Model Class - Not Handler In This Controller - Do Nothing
+    func receivedPrediction(_ prediction:[String:Any]){
+
+    }
+    
+    // Delegate From Model Class - Not Handler In This Controller - Do Nothing
+    func receiveModel(_ model:String){
+
     }
 }

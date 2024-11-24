@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: FastAPI (Attach)",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "192.168.1.135",
+                "port": 8000
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/fastapi_example.py"  
+                }
+            ],
+            "justMyCode": true
+        }
+    ]
+}
