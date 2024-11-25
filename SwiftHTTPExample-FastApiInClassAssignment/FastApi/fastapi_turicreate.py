@@ -373,6 +373,43 @@ async def predict_datapoint_turi(datapoint: FeatureDataPoint = Body(...)):
     pred_label = app.clf.predict(data)
     return {"prediction":str(pred_label)}
 
+# New Method That Accepts Model Type
+@app.post(
+    "/predict_turi/{model_type}",
+    response_description="Predict Label from Datapoint using the specified model type",
+)
+async def predict_datapoint_turi(
+    model_type: str,
+    datapoint: FeatureDataPoint = Body(...)
+):
+    """
+    Post a feature set and get the label back using the specified model type.
+    """
+
+    # Validate the model_type
+    if model_type not in ["xgboost", "random_forest"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported model type '{model_type}'. Supported types are 'xgboost', 'random_forest'."
+        )
+
+    # Place datapoint into an SFrame (one row)
+    data = tc.SFrame(data={"sequence": np.array(datapoint.feature).reshape((1, -1))})
+
+    # Load the appropriate model if not already loaded
+    if not hasattr(app, "clf") or app.clf == []:
+        try:
+            print(f"Loading {model_type} model for DSID {datapoint.dsid}")
+            app.clf = tc.load_model(f"../models/turi_model_dsid{datapoint.dsid}_{model_type}")
+        except FileNotFoundError:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Model file for DSID {datapoint.dsid} and model type '{model_type}' not found."
+            )
+
+    # Make a prediction
+    pred_label = app.clf.predict(data)
+    return {"prediction": str(pred_label)}
 
 #===========================================
 #   Machine Learning methods (Scikit-learn)

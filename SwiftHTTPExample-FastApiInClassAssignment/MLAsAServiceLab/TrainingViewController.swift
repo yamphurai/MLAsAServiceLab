@@ -134,13 +134,11 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
     }
     
     // Submit Request To Train Model Using KNN
-    // TODO: Need To Change This To Pass Model Type
     @objc private func trainRandomForestModel() {
         self.client.trainModel(modelType: "random_forest")
     }
     
     // Submit Request To Train Model Using XGBoost
-    // TODO: Need To Change This To Pass Model Type
     @objc private func trainXGBoostModel() {
         self.client.trainModel(modelType: "xgboost")
     }
@@ -274,11 +272,11 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
         }
     }
     
-    // Delegate From Model Class - Not Handler In This Controller - Do Nothing
+    // Delegate From Model Class - Not Handled In This Controller - Do Nothing
     func updateDsid(_ newDsid:Int){
     }
     
-    // Delegate From Model Class - Not Handler In This Controller - Do Nothing
+    // Delegate From Model Class - Not Handled In This Controller - Do Nothing
     func receivedPrediction(_ prediction:[String:Any]){
 
     }

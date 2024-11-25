@@ -146,6 +146,44 @@ class MlaasModel: NSObject, URLSessionDelegate{
         postTask.resume() // start the task
     }
     
+    // New Method That Accepts Model Type
+    func sendData(features: [Double], modelType: String){
+        let baseURL = "http://\(server_ip):8000/predict_turi/\(modelType)"
+        let postUrl = URL(string: "\(baseURL)")
+        
+        // create a custom HTTP POST request
+        var request = URLRequest(url: postUrl!)
+        
+        // utility method to use from below
+        let requestBody:Data = try! JSONSerialization.data(withJSONObject: ["feature":features,
+            "dsid":self.dsid])
+        
+        // The Type of the request is given here
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = requestBody
+        
+        let postTask : URLSessionDataTask = self.session.dataTask(with: request,
+                        completionHandler:{(data, response, error) in
+            
+            if(error != nil){
+                print("Error from server")
+                if let res = response{
+                    print("Response:\n",res)
+                }
+            }
+            else{
+                
+                if let delegate = self.delegate {
+                    let jsonDictionary = self.convertDataToDictionary(with: data)
+                    delegate.receivedPrediction(jsonDictionary)
+                }
+            }
+        })
+        
+        postTask.resume() // start the task
+    }
+    
     // get and store a new DSID
     func getNewDsid(){
         let baseURL = "http://\(server_ip):8000/max_dsid/"
