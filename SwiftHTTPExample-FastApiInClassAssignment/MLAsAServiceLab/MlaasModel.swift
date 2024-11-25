@@ -210,6 +210,42 @@ class MlaasModel: NSObject, URLSessionDelegate{
         
     }
     
+    // New Method To Train A Specific Model
+    func trainModel(modelType: String) {
+        let baseURL = "http://\(server_ip):8000/train_model_turi/\(dsid)/\(modelType)"
+        guard let getUrl = URL(string: "\(baseURL)") else {
+            print("Invalid URL.")
+            return
+        }
+        
+        // Create a custom HTTP GET request
+        var request = URLRequest(url: getUrl)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let getTask : URLSessionDataTask = self.session.dataTask(with: request,
+                        completionHandler:{(data, response, error) in
+            
+            // TODO: handle error!
+            let jsonDictionary = self.convertDataToDictionary(with: data)
+            
+            if let summary = jsonDictionary["summary"] as? String {
+                // tell delegate to update interface for the Dsid
+                print(summary)
+                
+                if let classValue = self.extractClassValue(from: summary) {
+                    if let delegate = self.delegate {
+                        delegate.receiveModel(classValue)
+                    }
+                }
+            }
+        })
+        
+        // Start the task
+        getTask.resume()
+    }
+
+    
     //MARK: Utility Functions
     private func matchIp(for regex:String, in text:String)->(Bool){
         do {
