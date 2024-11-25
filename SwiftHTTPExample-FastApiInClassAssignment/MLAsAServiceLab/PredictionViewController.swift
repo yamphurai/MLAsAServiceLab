@@ -10,6 +10,7 @@ class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideo
     private var currentCameraPosition: AVCaptureDevice.Position = .front
     private var handPoseData: [[String: Any]] = []
     private var shouldPredict = false
+    private var modelName: String = ""
     
     private let jointNameMapping: [String: String] = [
         "VNHLKTTIP": "thumbTip",
@@ -41,7 +42,9 @@ class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideo
     private let coordinateConfidence: Float = 0.5
     
     @IBOutlet weak var cameraView: UIView!
-    @IBOutlet weak var predictButton: UIButton!
+    @IBOutlet weak var predictTuriButton: UIButton!
+    @IBOutlet weak var predictXGBoostButton: UIButton!
+    @IBOutlet weak var predictRandomForestButton: UIButton!
     @IBOutlet weak var switchCameraButton: UIButton!
     @IBOutlet weak var modelLabel: UILabel!
     
@@ -54,12 +57,18 @@ class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideo
         
         client.delegate = self
         
+        // Set IP Based On Local Storage
         if let ipAddress = AppSettings.shared.loadData(key: "IPAddress") as? String {
             _ = client.setServerIp(ip: ipAddress)
         }
+        
+        // Set DSID Based On Local Storaage
+        if let dsid = AppSettings.shared.loadData(key: "DSID") as? Int {
+            client.updateDsid(dsid)
+        }
     }
     
-    
+    // Set Up Camera To Capture Video
     private func setupCamera() {
         captureSession = AVCaptureSession()
         guard let captureSession = captureSession else { return }
@@ -87,15 +96,34 @@ class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideo
         captureSession.startRunning()
     }
     
+    // Configure Event Handlers
     private func setupUI() {
         switchCameraButton.addTarget(self, action: #selector(switchCamera), for: .touchUpInside)
-        predictButton.addTarget(self, action: #selector(predict), for: .touchUpInside)
+        predictTuriButton.addTarget(self, action: #selector(predictTuri), for: .touchUpInside)
+        predictXGBoostButton.addTarget(self, action: #selector(predictXGBoost), for: .touchUpInside)
+        predictRandomForestButton.addTarget(self, action: #selector(predictRandomForest), for: .touchUpInside)
     }
     
-    @objc private func predict() {
+    // Capture Image And Predict Letting Turi Choose The Model Type
+    @objc private func predictTuri() {
         shouldPredict = true
+        modelName = "Turi"
     }
     
+    // Capture Image And Predict Using XGBoost
+    @objc private func predictXGBoost() {
+        shouldPredict = true
+        modelName = "XGBoost"
+    }
+    
+    // Capture Image And Predict Using Random Forest
+    @objc private func predictRandomForest() {
+        shouldPredict = true
+        modelName = "Random_Forest"
+    }
+    
+    // Rotate Camera From Front To Back and Vice Versa
+    // It Is Easier To Use The Front Camera
     @objc private func switchCamera() {
         guard let captureSession = captureSession, let videoDeviceInput = videoDeviceInput else { return }
         captureSession.beginConfiguration()
@@ -115,7 +143,7 @@ class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideo
         captureSession.commitConfiguration()
     }
     
-   
+    // Capture Video And Process Hand Pose Data
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
@@ -123,8 +151,8 @@ class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideo
         do {
             try requestHandler.perform([handPoseRequest])
             if let observations = handPoseRequest.results, !observations.isEmpty {
-                // Process To Capture Data For Model
-                processHandPoseForModel(observations.first!)
+                // Predict Based On Current Observation
+                predict(observations.first!)
                 
                 // Process To Show Position On Screen
                 processHandPose(observations.first!)
@@ -134,7 +162,9 @@ class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideo
         }
     }
     
-    // Capture Data And Update Screen
+    // Capture Hand Position Data And Use Coordinates To Create An Overlay
+    // Displaying The Joints In The Hand
+    // Used To Help Make Sure We Are Capturing The Correct Information
     private func processHandPose(_ observation: VNHumanHandPoseObservation) {
         guard let recognizedPoints = try? observation.recognizedPoints(.all) else { return }
         
@@ -151,13 +181,13 @@ class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideo
         }
     }
     
-    // Capture Data And Convert Coordinates Into A Flat Record That We Can Use For Training
-    private func processHandPoseForModel(_ observation: VNHumanHandPoseObservation) {
+    // Capture Data And Convert Coordinates Into A Vector That We Can Use For Training
+    private func predict(_ observation: VNHumanHandPoseObservation) {
         guard shouldPredict else { return } // Only process if capture is enabled
         guard let recognizedPoints = try? observation.recognizedPoints(.all) else { return }
 
-        var featureVector: [Double] = [] // Coordinates As Vectors
-        var columnNames: [String] = []  // Column Names For Debugging
+        var featureVector: [Double] = []
+        var columnNames: [String] = []
 
         // I Think They Should Always Be In The Same Order But
         // Sort By Name To Be Sure
@@ -189,13 +219,27 @@ class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideo
         print("Values: \(featureVector)")
 
         // Send To Server
-        self.client.sendData(featureVector)
+        if self.modelName.lowercased() == "turi" {
+            self.client.sendData(featureVector)
+        } else if self.modelName.lowercased()  == "xgboost" {
+            self.client.sendData(features: featureVector, modelType: self.modelName.lowercased())
+        }
+        else if self.modelName.lowercased() == "random_forest" {
+            self.client.sendData(features: featureVector, modelType: self.modelName.lowercased())
+        }
+        else {
+            print("Unknown Model: \(modelName)")
+        }
+
         
         // Indicate To Stop Capturing
         shouldPredict = false
     }
-
     
+    
+
+    // Generate Overlay On The Video Showing The Hand Points That Are Being Tracked
+    // And There Position. Useful For Debugging.
     private func displayHandPoints() {
         cameraView.layer.sublayers?.removeAll(where: { $0 is CAShapeLayer })
         
@@ -219,19 +263,20 @@ class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideo
         }
     }
     
-    // Delegate From Model Class - Not Handler In This Controller - Do Nothing
+    // Delegate From Model Class - Not Handled In This Controller - Do Nothing
     func updateDsid(_ newDsid:Int){
     }
     
-    // Delegate From Model Class - Not Handler In This Controller - Do Nothing
+    // Display Prediction To User
     func receivedPrediction(_ prediction:[String:Any]){
+        DispatchQueue.main.async {
+            let predictionString = prediction.map { "\($0.key): \($0.value)" }.joined(separator: "\n")
 
+            self.modelLabel.text = predictionString
+        }
     }
     
-    // Display Selected Model
+    // Delegate From Model Class - Not Handled In This Controller - Do Nothing
     func receiveModel(_ model:String){
-        DispatchQueue.main.async{
-            self.modelLabel.text = model
-        }
     }
 }
