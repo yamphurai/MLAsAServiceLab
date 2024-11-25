@@ -2,15 +2,14 @@ import UIKit
 import AVFoundation
 import Vision
 
-class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
+class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     private var captureSession: AVCaptureSession?
     private var videoDeviceInput: AVCaptureDeviceInput?
     private var previewLayer: AVCaptureVideoPreviewLayer!
     private var currentCameraPosition: AVCaptureDevice.Position = .front
     private var handPoseData: [[String: Any]] = []
-    private var labelForCapture: String = "Rock"
-    private var shouldCaptureData = false
+    private var shouldPredict = false
     
     private let jointNameMapping: [String: String] = [
         "VNHLKTTIP": "thumbTip",
@@ -42,13 +41,8 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
     private let coordinateConfidence: Float = 0.5
     
     @IBOutlet weak var cameraView: UIView!
-    @IBOutlet weak var rockButton: UIButton!
-    @IBOutlet weak var paperButton: UIButton!
-    @IBOutlet weak var scissorsButton: UIButton!
+    @IBOutlet weak var predictButton: UIButton!
     @IBOutlet weak var switchCameraButton: UIButton!
-    @IBOutlet weak var trainTuriButton: UIButton!
-    @IBOutlet weak var trainKnnButton: UIButton!
-    @IBOutlet weak var trainXGBoostButton: UIButton!
     @IBOutlet weak var modelLabel: UILabel!
     
     let client = MlaasModel()
@@ -60,18 +54,12 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
         
         client.delegate = self
         
-        // Set IP Based On Local Storage
         if let ipAddress = AppSettings.shared.loadData(key: "IPAddress") as? String {
             _ = client.setServerIp(ip: ipAddress)
         }
-        
-        // Set DSID Based On Local Storaage
-        if let dsid = AppSettings.shared.loadData(key: "DSID") as? Int {
-            client.updateDsid(dsid)
-        }
     }
     
-    // Set Up Camera To Capture Video
+    
     private func setupCamera() {
         captureSession = AVCaptureSession()
         guard let captureSession = captureSession else { return }
@@ -99,54 +87,15 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
         captureSession.startRunning()
     }
     
-    // Configure Event Handlers
     private func setupUI() {
-        rockButton.addTarget(self, action: #selector(captureRock), for: .touchUpInside)
-        paperButton.addTarget(self, action: #selector(capturePaper), for: .touchUpInside)
-        scissorsButton.addTarget(self, action: #selector(captureScissors), for: .touchUpInside)
         switchCameraButton.addTarget(self, action: #selector(switchCamera), for: .touchUpInside)
-        trainTuriButton.addTarget(self, action: #selector(trainTuriModel), for: .touchUpInside)
-        trainKnnButton.addTarget(self, action: #selector(trainRandomForestModel), for: .touchUpInside)
-        trainXGBoostButton.addTarget(self, action: #selector(trainXGBoostModel), for: .touchUpInside)
+        predictButton.addTarget(self, action: #selector(predict), for: .touchUpInside)
     }
     
-    // Capture Image And Label As Rock
-    @objc private func captureRock() {
-        labelForCapture = "Rock"
-        shouldCaptureData = true
+    @objc private func predict() {
+        shouldPredict = true
     }
     
-    // Capture Image And Label As Paper
-    @objc private func capturePaper() {
-        labelForCapture = "Paper"
-        shouldCaptureData = true
-    }
-    
-    // Capture Image And Label As Scissors
-    @objc private func captureScissors() {
-        labelForCapture = "Scissors"
-        shouldCaptureData = true
-    }
-    
-    // Submit Request To Train Model Letting Turi Choose The Model Type
-    @objc private func trainTuriModel() {
-        self.client.trainModel()
-    }
-    
-    // Submit Request To Train Model Using KNN
-    // TODO: Need To Change This To Pass Model Type
-    @objc private func trainRandomForestModel() {
-        self.client.trainModel(modelType: "random_forest")
-    }
-    
-    // Submit Request To Train Model Using XGBoost
-    // TODO: Need To Change This To Pass Model Type
-    @objc private func trainXGBoostModel() {
-        self.client.trainModel(modelType: "xgboost")
-    }
-    
-    // Rotate Camera From Front To Back and Vice Versa
-    // It Is Easier To Use The Front Camera
     @objc private func switchCamera() {
         guard let captureSession = captureSession, let videoDeviceInput = videoDeviceInput else { return }
         captureSession.beginConfiguration()
@@ -165,8 +114,8 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
         self.videoDeviceInput = newVideoDeviceInput
         captureSession.commitConfiguration()
     }
-
-    // Capture Video And Process Hand Pose Data
+    
+   
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
@@ -185,9 +134,7 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
         }
     }
     
-    // Capture Hand Position Data And Use Coordinates To Create An Overlay
-    // Displaying The Joints In The Hand
-    // Used To Help Make Sure We Are Capturing The Correct Information
+    // Capture Data And Update Screen
     private func processHandPose(_ observation: VNHumanHandPoseObservation) {
         guard let recognizedPoints = try? observation.recognizedPoints(.all) else { return }
         
@@ -204,13 +151,13 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
         }
     }
     
-    // Capture Data And Convert Coordinates Into A Vector That We Can Use For Training
+    // Capture Data And Convert Coordinates Into A Flat Record That We Can Use For Training
     private func processHandPoseForModel(_ observation: VNHumanHandPoseObservation) {
-        guard shouldCaptureData else { return } // Only process if capture is enabled
+        guard shouldPredict else { return } // Only process if capture is enabled
         guard let recognizedPoints = try? observation.recognizedPoints(.all) else { return }
 
-        var featureVector: [Double] = []
-        var columnNames: [String] = []
+        var featureVector: [Double] = [] // Coordinates As Vectors
+        var columnNames: [String] = []  // Column Names For Debugging
 
         // I Think They Should Always Be In The Same Order But
         // Sort By Name To Be Sure
@@ -238,19 +185,17 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
         }
 
         // Output For Debugging
-        print("Feature Vector for Label: \(labelForCapture)")
         print("Columns: \(columnNames.joined(separator: ", "))")
         print("Values: \(featureVector)")
 
         // Send To Server
-        self.client.sendData(featureVector, withLabel: labelForCapture)
+        self.client.sendData(featureVector)
         
         // Indicate To Stop Capturing
-        shouldCaptureData = false
+        shouldPredict = false
     }
 
-    // Generate Overlay On The Video Showing The Hand Points That Are Being Tracked
-    // And There Position. Useful For Debugging.
+    
     private func displayHandPoints() {
         cameraView.layer.sublayers?.removeAll(where: { $0 is CAShapeLayer })
         
@@ -286,7 +231,7 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
     // Display Selected Model
     func receiveModel(_ model:String){
         DispatchQueue.main.async{
-            self.modelLabel.text = "Model: " + model
+            self.modelLabel.text = model
         }
     }
 }

@@ -46,7 +46,7 @@ from typing import Optional, List
 from enum import Enum
 
 # FastAPI imports
-from fastapi import FastAPI, Body, HTTPException, status
+from fastapi import FastAPI, Body, HTTPException, status, Query
 from fastapi.responses import Response
 from pydantic import ConfigDict, BaseModel, Field, EmailStr
 from pydantic.functional_validators import BeforeValidator
@@ -93,6 +93,7 @@ app = FastAPI(
     title="Machine Learning as a Service",
     summary="An application using FastAPI to add a ReST API to a MongoDB for data and labels collection.",
     lifespan=custom_lifespan,
+    debug=True,
 )
 
 
@@ -307,6 +308,45 @@ async def train_model_turi(dsid: int):
 
     return {"summary":f"{model}"}
 
+# New Method That Take Model Type As A Query Parameter
+@app.get(
+    "/train_model_turi/{dsid}/{model_type}",
+    response_description="Train a machine learning model for the given dsid and specified model type",
+    response_model_by_alias=False
+)
+async def train_model_turi(
+    dsid: int,
+    model_type: str):
+
+    # convert data over to a scalable dataframe
+    datapoints = await app.collection.find({"dsid": dsid}).to_list(length=None)
+
+    if len(datapoints) < 2:
+        raise HTTPException(status_code=404, detail=f"DSID {dsid} has {len(datapoints)} datapoints.") 
+
+    # convert to dictionary and create SFrame
+    data = tc.SFrame(data={"target":[datapoint["label"] for datapoint in datapoints], 
+        "sequence":np.array([datapoint["feature"] for datapoint in datapoints])}
+    )
+
+    # Train the model based on the specified model_type
+    if model_type.lower() == "xgboost":
+        model = tc.boosted_trees_classifier.create(data, target="target", verbose=0)
+    elif model_type.lower() == "random_forest":
+        model = tc.random_forest_classifier.create(data, target="target", verbose=0)
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported model type '{model_type}'. Supported types are 'xgboost', 'knn'."
+        )
+
+    # save model for use later, if desired
+    model.save(f"../models/turi_model_dsid{dsid}_{model_type}")
+
+    # save this for use later 
+    app.clf = model
+
+    return {"summary":f"{model}"}
 
 @app.post(
     "/predict_turi/",
