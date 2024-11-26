@@ -65,6 +65,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from joblib import dump, load
 import pickle
 import numpy as np
+import json
 
 
 # define some things in API
@@ -300,11 +301,34 @@ async def train_model_turi(dsid: int):
     # create a classifier model  
     model = tc.classifier.create(data,target="target",verbose=0)# training
     
+    metrics = model.evaluate(data)
+
     # save model for use later, if desired
     model.save("../models/turi_model_dsid%d"%(dsid))
 
     # save this for use later 
     app.clf = model 
+
+    response = {
+        "model_name": type(model).__name__,
+        "accuracy": metrics.get("accuracy", 0.0)
+    }
+
+    return response
+
+
+@app.get(
+    "/get_model_turi/{dsid}",
+    response_description="Train a machine learning model for the given dsid",
+    response_model_by_alias=False,
+)
+async def get_model_turi(dsid: int):
+    """
+    Train the machine learning model using Turi
+    """
+    
+    # save model for use later, if desired
+    model = tc.load_model("../models/turi_model_dsid%d"%(dsid))
 
     return {"summary":f"{model}"}
 
