@@ -284,7 +284,7 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
     // Display Selected Model
     func receiveModel(_ model:String){
         DispatchQueue.main.async{
-            self.modelLabel.text = "Model: " + model
+            self.modelLabel.text = model
         }
     }
 }
