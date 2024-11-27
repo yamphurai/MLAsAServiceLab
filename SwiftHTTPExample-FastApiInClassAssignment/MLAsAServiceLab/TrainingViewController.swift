@@ -139,6 +139,8 @@ class TrainingViewController: UIViewController, ClientDelegate, AVCaptureVideoDa
     }
     
     // Submit Request To Train Model Using XGBoost
+    //IMPORTANT - XGBOOST AND BOOSTED TREE ARE NOT THE SAME THING
+    //HOWEVER TOO MANY CHANGES TO CHANGE VARIABLES AND LABELS
     @objc private func trainXGBoostModel() {
         self.client.trainModel(modelType: "xgboost")
     }
