@@ -301,10 +301,14 @@ async def train_model_turi(dsid: int):
     # create a classifier model  
     model = tc.classifier.create(data,target="target",verbose=0)# training
     
+    #  Get Metrics With Accuracy
     metrics = model.evaluate(data)
 
     # save model for use later, if desired
     model.save("../models/turi_model_dsid%d"%(dsid))
+    
+    # Save Core ML Version
+    model.export_coreml("../models/turi_model_dsid%d.mlmodel"%(dsid))
 
     # save this for use later 
     app.clf = model 
@@ -364,13 +368,25 @@ async def train_model_turi(
             detail=f"Unsupported model type '{model_type}'. Supported types are 'xgboost', 'knn'."
         )
 
+    #  Get Metrics With Accuracy
+    metrics = model.evaluate(data)
+    accuracy = metrics['accuracy']
+  
     # save model for use later, if desired
     model.save(f"../models/turi_model_dsid{dsid}_{model_type}")
 
+    # Save Core ML Version
+    model.export_coreml(f"../models/turi_model_dsid{dsid}_{model_type}.mlmodel")
+    
     # save this for use later 
     app.clf = model
 
-    return {"summary":f"{model}"}
+    response = {
+        "model_name": model_type,
+        "accuracy": accuracy
+    }
+    print(response) 
+    return response
 
 @app.post(
     "/predict_turi/",

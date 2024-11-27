@@ -274,15 +274,23 @@ class MlaasModel: NSObject, URLSessionDelegate{
             // TODO: handle error!
             let jsonDictionary = self.convertDataToDictionary(with: data)
             
-            if let summary = jsonDictionary["summary"] as? String {
-                // tell delegate to update interface for the Dsid
-                print(summary)
-                
-                if let classValue = self.extractClassValue(from: summary) {
-                    if let delegate = self.delegate {
-                        delegate.receiveModel(classValue)
-                    }
-                }
+            var modelName: String = ""
+            var accuracy: Double = 0.0
+            
+            if let modelResult = jsonDictionary["model_name"] as? String {
+                modelName = modelResult
+            }
+
+            if let accuracyResult = jsonDictionary["accuracy"] as? Double {
+                accuracy = accuracyResult
+            }
+            
+            let formattedReturn = "Model: \(modelName)\nAccuracy: \(String(format: "%.2f", accuracy * 100))%"
+            print(formattedReturn)
+            
+            // Use the model name to update the delegate (if applicable)
+            if let delegate = self.delegate {
+                delegate.receiveModel(formattedReturn)
             }
         })
         
