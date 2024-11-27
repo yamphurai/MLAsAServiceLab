@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		06AA19F52CEADBB600F30D1E /* HandPoseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AA19F42CEADBB600F30D1E /* HandPoseViewController.swift */; };
+		492E9D9B2CF6AB0B006E58BF /* MLCodePredictionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492E9D9A2CF6AB0B006E58BF /* MLCodePredictionController.swift */; };
+		492E9D9D2CF6ABD6006E58BF /* Turi.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 492E9D9C2CF6ABD6006E58BF /* Turi.mlmodel */; };
+		492E9D9F2CF6ABF0006E58BF /* XGBoost.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 492E9D9E2CF6ABF0006E58BF /* XGBoost.mlmodel */; };
+		492E9DA12CF6ABFA006E58BF /* RandomForest.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 492E9DA02CF6ABFA006E58BF /* RandomForest.mlmodel */; };
 		4948CE472CF165D100875930 /* TrainingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4948CE462CF165D100875930 /* TrainingViewController.swift */; };
 		4948CE492CF18EEF00875930 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4948CE482CF18EEF00875930 /* SettingsViewController.swift */; };
 		4948CE4E2CF2FC6100875930 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4948CE4D2CF2FC6100875930 /* AppSettings.swift */; };
@@ -21,7 +24,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		06AA19F42CEADBB600F30D1E /* HandPoseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandPoseViewController.swift; sourceTree = "<group>"; };
+		492E9D9A2CF6AB0B006E58BF /* MLCodePredictionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLCodePredictionController.swift; sourceTree = "<group>"; };
+		492E9D9C2CF6ABD6006E58BF /* Turi.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Turi.mlmodel; sourceTree = "<group>"; };
+		492E9D9E2CF6ABF0006E58BF /* XGBoost.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = XGBoost.mlmodel; sourceTree = "<group>"; };
+		492E9DA02CF6ABFA006E58BF /* RandomForest.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = RandomForest.mlmodel; sourceTree = "<group>"; };
 		4948CE462CF165D100875930 /* TrainingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingViewController.swift; sourceTree = "<group>"; };
 		4948CE482CF18EEF00875930 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		4948CE4D2CF2FC6100875930 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
@@ -74,9 +80,11 @@
 		B67483D71ACA2D6800A9970E /* MLAsAServiceLab */ = {
 			isa = PBXGroup;
 			children = (
+				492E9DA02CF6ABFA006E58BF /* RandomForest.mlmodel */,
+				492E9D9E2CF6ABF0006E58BF /* XGBoost.mlmodel */,
+				492E9D9C2CF6ABD6006E58BF /* Turi.mlmodel */,
 				B67483DA1ACA2D6800A9970E /* AppDelegate.swift */,
 				B6022E662C108DB400E2CC70 /* MlaasModel.swift */,
-				06AA19F42CEADBB600F30D1E /* HandPoseViewController.swift */,
 				B694B0191FA377E4009A4277 /* RingBuffer.swift */,
 				B67483DE1ACA2D6800A9970E /* Main.storyboard */,
 				B67483E11ACA2D6800A9970E /* Images.xcassets */,
@@ -86,6 +94,7 @@
 				4948CE482CF18EEF00875930 /* SettingsViewController.swift */,
 				4948CE4D2CF2FC6100875930 /* AppSettings.swift */,
 				4948CE4F2CF3F12A00875930 /* PredictionViewController.swift */,
+				492E9D9A2CF6AB0B006E58BF /* MLCodePredictionController.swift */,
 			);
 			path = MLAsAServiceLab;
 			sourceTree = SOURCE_ROOT;
@@ -171,12 +180,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				492E9D9B2CF6AB0B006E58BF /* MLCodePredictionController.swift in Sources */,
 				4948CE472CF165D100875930 /* TrainingViewController.swift in Sources */,
 				4948CE502CF3F12A00875930 /* PredictionViewController.swift in Sources */,
+				492E9DA12CF6ABFA006E58BF /* RandomForest.mlmodel in Sources */,
+				492E9D9F2CF6ABF0006E58BF /* XGBoost.mlmodel in Sources */,
 				B67483DB1ACA2D6800A9970E /* AppDelegate.swift in Sources */,
 				4948CE4E2CF2FC6100875930 /* AppSettings.swift in Sources */,
-				06AA19F52CEADBB600F30D1E /* HandPoseViewController.swift in Sources */,
 				B6022E672C108DB400E2CC70 /* MlaasModel.swift in Sources */,
+				492E9D9D2CF6ABD6006E58BF /* Turi.mlmodel in Sources */,
 				B694B01A1FA377E4009A4277 /* RingBuffer.swift in Sources */,
 				4948CE492CF18EEF00875930 /* SettingsViewController.swift in Sources */,
 			);
