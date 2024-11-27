@@ -110,7 +110,9 @@ class PredictionViewController: UIViewController, ClientDelegate, AVCaptureVideo
         modelName = "Turi"
     }
     
-    // Capture Image And Predict Using XGBoost
+    // Capture Image And Predict Using Boosted_Tree
+    //IMPORTANT - XGBOOST AND BOOSTED TREE ARE NOT THE SAME THING
+    //HOWEVER TOO MANY CHANGES TO CHANGE VARIABLES AND LABELS
     @objc private func predictXGBoost() {
         shouldPredict = true
         modelName = "XGBoost"

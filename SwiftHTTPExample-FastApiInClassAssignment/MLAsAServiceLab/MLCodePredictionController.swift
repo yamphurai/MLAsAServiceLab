@@ -49,8 +49,7 @@ class MLCorePredictionViewController: UIViewController, AVCaptureVideoDataOutput
     @IBOutlet weak var modelLabel: UILabel!
     
     let randomForest = try! RandomForest(configuration: MLModelConfiguration())
-    let xgBoost = try! XGBoost(configuration: MLModelConfiguration())
-    let turi = try! XGBoost(configuration: MLModelConfiguration())
+    let boostedTree = try! BoostedTree(configuration: MLModelConfiguration())
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,13 +92,10 @@ class MLCorePredictionViewController: UIViewController, AVCaptureVideoDataOutput
         predictRandomForestButton.addTarget(self, action: #selector(predictRandomForest), for: .touchUpInside)
     }
     
-    // Capture Image And Predict Letting Turi Choose The Model Type
-    @objc private func predictTuri() {
-        shouldPredict = true
-        modelName = "Turi"
-    }
     
     // Capture Image And Predict Using XGBoost
+    //IMPORTANT - XGBOOST AND BOOSTED TREE ARE NOT THE SAME THING
+    //HOWEVER TOO MANY CHANGES TO CHANGE VARIABLES AND LABELS
     @objc private func predictXGBoost() {
         shouldPredict = true
         modelName = "XGBoost"
@@ -221,11 +217,11 @@ class MLCorePredictionViewController: UIViewController, AVCaptureVideoDataOutput
         var target: String = ""
         if self.modelName.lowercased()  == "xgboost" {
             do {
-                let input = XGBoostInput(sequence: multiArray)
-                let prediction = try xgBoost.prediction(input: input)
+                let input = BoostedTreeInput(sequence: multiArray)
+                let prediction = try boostedTree.prediction(input: input)
                 target = prediction.target
             } catch {
-                print("Error during xgboost prediction: \(error)")
+                print("Error during boosted_tree prediction: \(error)")
             }
         }
         else if self.modelName.lowercased() == "random_forest" {
