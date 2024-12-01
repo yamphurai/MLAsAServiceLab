@@ -18,3 +18,5 @@ DerivedData/
 
 # VSCode specific files
 .vscode/
+.DS_Store
+venv/
