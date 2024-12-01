@@ -1,4 +1,20 @@
+# macOS specific files
 .DS_Store
-*.xcworkspace
-xcuserdata/
 
+# Python virtual environments
+venv/
+__pycache__/
+
+# Xcode specific files
+*.xcuserdata/
+*.xcscmblueprint/
+*.xcworkspacedata/
+*.xcworkspace/
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/xcshareddata/
+build/
+DerivedData/
+
+# VSCode specific files
+.vscode/
