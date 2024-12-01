@@ -1,5 +1,13 @@
+# macOS specific files
 .DS_Store
-*.xcuserstate
 
-nano .gitignoreV
-
+# Xcode specific files
+*.xcuserdata/
+*.xcscmblueprint/
+*.xcworkspacedata/
+*.xcworkspace/
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/xcshareddata/
+build/
+DerivedData/

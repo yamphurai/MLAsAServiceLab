@@ -1,12 +1,13 @@
 import UIKit
 
 class SettingsViewController: UIViewController, ClientDelegate  {
+    
     @IBOutlet weak var ipTextField: UITextField!
     @IBOutlet weak var dsidLabel: UILabel!
     @IBOutlet weak var dsidRequest: UIButton!
     @IBOutlet weak var ipSave: UIButton!
     
-    private let plistFileName = "Data.plist"
+    private let plistFileName = "Data.plist"  //to store application specific settings and data
     
     let client = MlaasModel()
     
